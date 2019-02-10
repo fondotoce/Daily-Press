@@ -3,12 +3,16 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
  */
 class Article
 {
+    use TimestampableEntity;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -22,6 +26,7 @@ class Article
     private $title;
 
     /**
+     * @Gedmo\Slug(fields={"title"})
      * @ORM\Column(type="string", length=100, unique=true)
      */
     private $slug;
@@ -44,7 +49,7 @@ class Article
     /**
      * @ORM\Column(type="integer")
      */
-    private $heartCount;
+    private $heartCount = 0;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -137,6 +142,17 @@ class Article
     {
         $this->imageFilename = $imageFilename;
 
+        return $this;
+    }
+
+    public function getImagePath()
+    {
+        return 'images/'.$this->getImageFilename();
+    }
+
+    public function incrementHeartCount(): self
+    {
+        $this->heartCount = $this->heartCount + 1;
         return $this;
     }
 }
